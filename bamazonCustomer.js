@@ -71,14 +71,10 @@ function runBamazon(){
                         console.log("Your total is "+total);
                         retry();
                     });
-                }
-
-            })
-
+                };
+            });
         });
     });
-
-    
 };
 
 function retry() {
@@ -87,7 +83,7 @@ function retry() {
             type:"list",
             name:"retry",
             message:"Do you want to make another purchase?",
-            choices: ["Yes", "Nn"]
+            choices: ["Yes", "No"]
         }
     ]).then(function(answer){
         if(answer.retry === "Yes"){
@@ -95,6 +91,6 @@ function retry() {
         }else{
             console.log("Thanks for stopping by.");
             connection.end();
-        }
-    })
-}
+        };
+    });
+};
