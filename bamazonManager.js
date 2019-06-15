@@ -23,7 +23,7 @@ function runBamazon(){
             type: "list",
             name:"menu",
             message:"What do you want to do",
-            choices:["View products for sale","View low inventory", "Add inventory","Add new product" ]
+            choices:["View products for sale","View low inventory", "Add inventory","Add new product","Exit"]
         }
     ]).then(function(answer){
         var menuChoice = answer.menu;
@@ -43,3 +43,36 @@ function runBamazon(){
 
     })
 }
+
+function productsForsale(){
+
+    connection.connect(function(){
+        connection.query("SELECT * FROM products", function(err,res){
+            if(err) throw err;
+            for(var i =0; i< res.length; i++){
+                console.log("\nID: "+res[i].item_id+" | Item: "+res[i].product_name+" | Department: "+res[i].department_name+" | Price: "+res[i].price+" | In Stock: "+res[i].stock_quantity+" |\n");
+            };
+        });
+    });
+
+    retry();
+};
+
+
+function retry() {
+    inquirer.prompt([
+        {
+            type:"list",
+            name:"retry",
+            message:"Do you want to do something else?",
+            choices: ["Yes", "No"]
+        }
+    ]).then(function(answer){
+        if(answer.retry === "Yes"){
+            runBamazon();
+        }else{
+            console.log("Thanks for stopping by.");
+            connection.end();
+        };
+    });
+};
