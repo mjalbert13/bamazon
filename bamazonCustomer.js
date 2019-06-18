@@ -1,5 +1,8 @@
 var inquirer = require("inquirer");
 var mysql = require("mysql");
+var Table = require("cli-table");
+
+
 
 var connection = mysql.createConnection({
     host: "localhost",
@@ -18,13 +21,20 @@ connection.connect(function(err){
 function runBamazon(){
 
     connection.connect(function(){
-    
+        var table = new Table({
+            head:['Item ID','Product Name','Department','Price','In Stock'],
+            style:{
+                head: ['green'],
+                compact: false,
+                colAligns:['center'],
+            }
+        });
         connection.query("SELECT * FROM products", function(err, res){
             if(err) throw err;
             for(var i =0; i< res.length; i++){
-                console.log("\nID: "+res[i].item_id+" | Item: "+res[i].product_name+" | Department: "+res[i].department_name+" | Price: "+res[i].price+" | In Stock: "+res[i].stock_quantity+" |\n");
+                table.push([res[i].item_id,res[i].product_name,res[i].department_name,res[i].price,res[i].stock_quantity]);
             }
-            
+            console.log(table.toString());
             inquirer.prompt([
                 {
                     type:"rawlist",

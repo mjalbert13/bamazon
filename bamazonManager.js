@@ -1,5 +1,6 @@
 var mysql = require("mysql");
 var inquirer = require("inquirer");
+var Table = require("cli-table")
 
 var connection = mysql.createConnection({
     host: "localhost",
@@ -46,22 +47,37 @@ function runBamazon(){
 }
 
 function productsForsale(){
+    var table = new Table({
+        head:['Item ID','Product Name','Department','Price','In Stock'],
+        style:{
+            head: ['green'],
+            compact: false,
+            colAligns:['center'],
+        }
+    });
 
     connection.connect(function(){
         connection.query("SELECT * FROM products", function(err,res){
             if(err) throw err;
             for(var i =0; i< res.length; i++){
-                console.log("\nID: "+res[i].item_id+" | Item: "+res[i].product_name+" | Department: "+res[i].department_name+" | Price: "+res[i].price+" | In Stock: "+res[i].stock_quantity+" |\n");
+                table.push([res[i].item_id,res[i].product_name,res[i].department_name,res[i].price,res[i].stock_quantity]);
             };
+            console.log(table.toString());
             retry();
         });
     });
-
-    
 };
 
 function lowInventory(){
-    var lowStock = [];
+    var lowStock =[];
+    var table = new Table({
+        head:['Item ID','Product Name','Department','Price','In Stock'],
+        style:{
+            head: ['red'],
+            compact: false,
+            colAligns:['center'],
+        }
+    })
 
     connection.query("SELECT * FROM products WHERE stock_quantity < 5",function(err, res){
         if(err) throw err;
@@ -74,11 +90,13 @@ function lowInventory(){
             if(lowStock.length < 1){
                 console.log("Your Stock looks good!");
             }else{
-            console.log("\nID: "+lowStock[i].item_id+" | Product: "+lowStock[i].product_name+" | Department: "+lowStock[i].department_name+" | Price: "+lowStock[i].price+" | Stock: "+lowStock[i].stock_quantity +"\n");
+            table.push([res[i].item_id,res[i].product_name,res[i].department_name,res[i].price,res[i].stock_quantity]);
             }
         }
+        console.log(table.toString());
+        retry();
     })
-    retry();
+    
 }
 
 function addInventory(){
@@ -188,7 +206,7 @@ function addProduct(){
             stock_quantity: answer.quantity
         },function(err,res){
             if(err) throw err;
-            console.log("You added "+answer.product+" to the database\n")
+            console.log("\nYou added "+answer.product+" to the database\n")
         })
         retry();
     });
