@@ -16,7 +16,6 @@ connection.connect(function(err){
     runBamazon();
 });
 
-
 function runBamazon(){
 
     inquirer.prompt([
@@ -100,7 +99,6 @@ function lowInventory(){
 }
 
 function addInventory(){
-
 
     connection.query("SELECT * FROM products", function(err,res){
         if(err) throw err;
